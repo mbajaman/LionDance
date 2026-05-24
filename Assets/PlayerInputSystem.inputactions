@@ -3,7 +3,7 @@
     "name": "PlayerInputSystem",
     "maps": [
         {
-            "name": "PlayerActions",
+            "name": "FrontActions",
             "id": "2384fc27-d561-470a-abf7-f8fcce4a427c",
             "actions": [
                 {
@@ -81,6 +81,94 @@
                     "name": "",
                     "id": "4c093b1a-c66d-48e6-8c13-155d0872d428",
                     "path": "<Keyboard>/s",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Back",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "BackActions",
+            "id": "d44f75ee-c375-4566-82d9-34d8e0b86eb5",
+            "actions": [
+                {
+                    "name": "Forward",
+                    "type": "Button",
+                    "id": "3d31a654-c58e-4dba-8299-a0a29320a384",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Left",
+                    "type": "Button",
+                    "id": "f89968a3-ea95-4da6-b332-b33b76e41aee",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Back",
+                    "type": "Button",
+                    "id": "87c7ac4e-1e60-4623-947d-4487a204ea90",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Right",
+                    "type": "Button",
+                    "id": "ae104b37-2a33-492a-b089-61f609728fc4",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "ebfe3f11-effe-469e-abaa-4011831b6631",
+                    "path": "<Keyboard>/upArrow",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Forward",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7552092f-00cb-4981-b343-ff50a6306561",
+                    "path": "<Keyboard>/leftArrow",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Left",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "aee2fb71-46f5-4566-ba89-8d07cc641c95",
+                    "path": "<Keyboard>/rightArrow",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Right",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b8ed423f-9498-4629-a400-d3a561ecb70d",
+                    "path": "<Keyboard>/downArrow",
                     "interactions": "Press",
                     "processors": "",
                     "groups": "",
