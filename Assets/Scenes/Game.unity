@@ -2769,9 +2769,41 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 978173595067050247, guid: 3dd902d0a90b63b489f91480ddc0349b, type: 3}
+      propertyPath: rotationTarget
+      value: 
+      objectReference: {fileID: 381806207}
+    - target: {fileID: 978173595067050247, guid: 3dd902d0a90b63b489f91480ddc0349b, type: 3}
+      propertyPath: modelForwardYawOffset
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 978173595067050247, guid: 3dd902d0a90b63b489f91480ddc0349b, type: 3}
+      propertyPath: rotateToMoveDirection
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2539777125429821032, guid: 3dd902d0a90b63b489f91480ddc0349b, type: 3}
       propertyPath: m_Name
       value: PlayerLion
+      objectReference: {fileID: 0}
+    - target: {fileID: 5182749820055891141, guid: 3dd902d0a90b63b489f91480ddc0349b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 5182749820055891141, guid: 3dd902d0a90b63b489f91480ddc0349b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5182749820055891141, guid: 3dd902d0a90b63b489f91480ddc0349b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 5182749820055891141, guid: 3dd902d0a90b63b489f91480ddc0349b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5182749820055891141, guid: 3dd902d0a90b63b489f91480ddc0349b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 8263352785872672458, guid: 3dd902d0a90b63b489f91480ddc0349b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2824,6 +2856,14 @@ PrefabInstance:
     - target: {fileID: 8313690305813896162, guid: 3dd902d0a90b63b489f91480ddc0349b, type: 3}
       propertyPath: failureCooldown
       value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 8745522604040365782, guid: 3dd902d0a90b63b489f91480ddc0349b, type: 3}
+      propertyPath: rotationTarget
+      value: 
+      objectReference: {fileID: 381806207}
+    - target: {fileID: 8745522604040365782, guid: 3dd902d0a90b63b489f91480ddc0349b, type: 3}
+      propertyPath: modelForwardYawOffset
+      value: -90
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

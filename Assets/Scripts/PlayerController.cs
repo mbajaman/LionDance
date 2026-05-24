@@ -36,6 +36,22 @@ public class PlayerController : MonoBehaviour
     [Tooltip("Degrees per second the player rotates to face the step direction.")]
     [SerializeField] private float turnSpeed = 720f;
 
+    [Tooltip("Transform that gets rotated to face the step direction. Set this to the shared lion " +
+             "midpoint/parent so the whole model turns instead of just this half. " +
+             "Leave null to fall back to this object's own transform.")]
+    [SerializeField] private Transform rotationTarget;
+
+    [Tooltip("Extra Y rotation (degrees) applied on top of LookRotation. " +
+             "Use this if the model's authored forward axis isn't local +Z (e.g. set to 90 if the model " +
+             "faces local +X, or 45 if the mesh is pre-rotated for an isometric camera).")]
+    [SerializeField] private float modelForwardYawOffset = 0f;
+
+    [Tooltip("Optional camera (or any transform) whose yaw defines what 'forward' means on screen. " +
+             "When set, step directions are treated as camera-relative before being turned into a facing, " +
+             "so 'Forward' always means screen-up regardless of how the iso camera is rotated. " +
+             "Leave null to keep using raw world directions.")]
+    [SerializeField] private Transform cameraRelativeTo;
+
     [Header("Animation")]
     [Tooltip("Optional Animator that plays this half's clips. Leave null to disable animation.")]
     [SerializeField] private Animator stepAnimator;
@@ -96,9 +112,11 @@ public class PlayerController : MonoBehaviour
         _rightAction = map.FindAction("Right", throwIfNotFound: true);
         _jumpAction = map.FindAction("Jump", throwIfNotFound: false);
 
+        if (rotationTarget == null) rotationTarget = transform;
+
         _stepStart = transform.position;
         _stepTarget = transform.position;
-        _facingTarget = transform.rotation;
+        _facingTarget = rotationTarget.rotation;
 
         _hasStepTrigger = stepAnimator != null && !string.IsNullOrEmpty(stepTriggerName);
         if (_hasStepTrigger) _stepTriggerHash = Animator.StringToHash(stepTriggerName);
@@ -188,7 +206,21 @@ public class PlayerController : MonoBehaviour
 
         if (rotateToMoveDirection)
         {
-            _facingTarget = Quaternion.LookRotation(direction, Vector3.up);
+            Vector3 facingDir = direction;
+
+            if (cameraRelativeTo != null)
+            {
+                float camYaw = cameraRelativeTo.eulerAngles.y;
+                facingDir = Quaternion.Euler(0f, camYaw, 0f) * direction;
+            }
+
+            facingDir.y = 0f;
+            if (facingDir.sqrMagnitude > 0.0001f)
+            {
+                _facingTarget =
+                    Quaternion.LookRotation(facingDir.normalized, Vector3.up) *
+                    Quaternion.Euler(0f, modelForwardYawOffset, 0f);
+            }
         }
 
         if (_hasStepTrigger) stepAnimator.SetTrigger(_stepTriggerHash);
@@ -252,10 +284,10 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        if (rotateToMoveDirection)
+        if (rotateToMoveDirection && rotationTarget != null)
         {
-            transform.rotation = Quaternion.RotateTowards(
-                transform.rotation,
+            rotationTarget.rotation = Quaternion.RotateTowards(
+                rotationTarget.rotation,
                 _facingTarget,
                 turnSpeed * Time.deltaTime);
         }
