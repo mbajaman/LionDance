@@ -1933,6 +1933,14 @@ PrefabInstance:
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 978173595067050247, guid: 3dd902d0a90b63b489f91480ddc0349b, type: 3}
+      propertyPath: jumpHeight
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 978173595067050247, guid: 3dd902d0a90b63b489f91480ddc0349b, type: 3}
+      propertyPath: jumpDuration
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 978173595067050247, guid: 3dd902d0a90b63b489f91480ddc0349b, type: 3}
       propertyPath: stepAnimator
       value: 
       objectReference: {fileID: 5910105531320313135}
@@ -1999,6 +2007,14 @@ PrefabInstance:
     - target: {fileID: 8263352785872672458, guid: 3dd902d0a90b63b489f91480ddc0349b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8745522604040365782, guid: 3dd902d0a90b63b489f91480ddc0349b, type: 3}
+      propertyPath: jumpHeight
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8745522604040365782, guid: 3dd902d0a90b63b489f91480ddc0349b, type: 3}
+      propertyPath: jumpDuration
+      value: 0.6
       objectReference: {fileID: 0}
     - target: {fileID: 8745522604040365782, guid: 3dd902d0a90b63b489f91480ddc0349b, type: 3}
       propertyPath: stepAnimator
