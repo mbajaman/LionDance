@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,6 +11,10 @@ public class PlayerController : MonoBehaviour
 
     [Tooltip("Name of the action map inside the InputActionAsset that holds the movement buttons.")]
     [SerializeField] private string actionMapName = "PlayerActions";
+
+    [Tooltip("If true, the controller starts a step immediately on input. " +
+             "Set to false when an external system (e.g. LionCoordinator) decides when to step.")]
+    [SerializeField] private bool autoStartOnInput = true;
 
     [Header("Step Movement")]
     [Tooltip("World distance the player moves per button press.")]
@@ -24,6 +29,23 @@ public class PlayerController : MonoBehaviour
     [Tooltip("Degrees per second the player rotates to face the step direction.")]
     [SerializeField] private float turnSpeed = 720f;
 
+    [Header("Animation")]
+    [Tooltip("Optional Animator that plays this half's step clip. Leave null to disable animation.")]
+    [SerializeField] private Animator stepAnimator;
+
+    [Tooltip("Trigger parameter on the Animator to fire each time a step starts.")]
+    [SerializeField] private string stepTriggerName = "Step";
+
+    public event Action<Vector3> StepRequested;
+
+    public bool IsStepping => _isStepping;
+
+    public bool AutoStartOnInput
+    {
+        get => autoStartOnInput;
+        set => autoStartOnInput = value;
+    }
+
     private InputAction _forwardAction;
     private InputAction _backAction;
     private InputAction _leftAction;
@@ -35,6 +57,9 @@ public class PlayerController : MonoBehaviour
     private bool _isStepping;
 
     private Quaternion _facingTarget;
+
+    private int _stepTriggerHash;
+    private bool _hasStepTrigger;
 
     private void Awake()
     {
@@ -54,6 +79,9 @@ public class PlayerController : MonoBehaviour
         _stepStart = transform.position;
         _stepTarget = transform.position;
         _facingTarget = transform.rotation;
+
+        _hasStepTrigger = stepAnimator != null && !string.IsNullOrEmpty(stepTriggerName);
+        if (_hasStepTrigger) _stepTriggerHash = Animator.StringToHash(stepTriggerName);
     }
 
     private void OnEnable()
@@ -86,10 +114,21 @@ public class PlayerController : MonoBehaviour
         _rightAction.Disable();
     }
 
-    private void OnForwardPerformed(InputAction.CallbackContext _) => TryStartStep(Vector3.right);
-    private void OnBackPerformed(InputAction.CallbackContext _) => TryStartStep(Vector3.left);
-    private void OnLeftPerformed(InputAction.CallbackContext _) => TryStartStep(Vector3.forward);
-    private void OnRightPerformed(InputAction.CallbackContext _) => TryStartStep(Vector3.back);
+    private void OnForwardPerformed(InputAction.CallbackContext _) => RequestStep(Vector3.right);
+    private void OnBackPerformed(InputAction.CallbackContext _) => RequestStep(Vector3.left);
+    private void OnLeftPerformed(InputAction.CallbackContext _) => RequestStep(Vector3.forward);
+    private void OnRightPerformed(InputAction.CallbackContext _) => RequestStep(Vector3.back);
+
+    private void RequestStep(Vector3 direction)
+    {
+        if (_isStepping) return;
+
+        StepRequested?.Invoke(direction);
+
+        if (autoStartOnInput) TryStartStep(direction);
+    }
+
+    public void ExecuteStep(Vector3 direction) => TryStartStep(direction);
 
     private void TryStartStep(Vector3 direction)
     {
@@ -104,6 +143,8 @@ public class PlayerController : MonoBehaviour
         {
             _facingTarget = Quaternion.LookRotation(direction, Vector3.up);
         }
+
+        if (_hasStepTrigger) stepAnimator.SetTrigger(_stepTriggerHash);
     }
 
     private void Update()
