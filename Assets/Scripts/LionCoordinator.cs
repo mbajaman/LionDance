@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 /// <summary>
@@ -5,6 +6,9 @@ using UnityEngine;
 /// direction, or both Jump) within a time window before either half actually
 /// acts. Mismatched intents, presses that are too fast or too slow, and
 /// timeouts log a debug message and clear the pending state.
+///
+/// Exposes events and read-only state so a HUD (see <see cref="RhythmHUD"/>)
+/// can show the timing window, cooldowns, and per-side success/failure feedback.
 /// </summary>
 [DisallowMultipleComponent]
 public class LionCoordinator : MonoBehaviour
@@ -41,6 +45,48 @@ public class LionCoordinator : MonoBehaviour
     private float _frontCooldownUntil;
     private float _backCooldownUntil;
 
+    /// <summary>Minimum seconds between front and back press (any closer = "too fast" fail).</summary>
+    public float MinSyncDelay => minSyncDelay;
+
+    /// <summary>Maximum seconds between front and back press (anything later = timeout fail).</summary>
+    public float SyncWindow => syncWindow;
+
+    /// <summary>Seconds the side that just failed must wait before another press is accepted.</summary>
+    public float FailureCooldown => failureCooldown;
+
+    /// <summary>Action the front half is currently waiting for the back to confirm (or <see cref="LionAction.None"/>).</summary>
+    public LionAction FrontPending => _frontPending;
+
+    /// <summary><see cref="Time.time"/> at which the front's pending press was registered. Only meaningful when <see cref="FrontPending"/>.IsValid.</summary>
+    public float FrontPendingTime => _frontPendingTime;
+
+    /// <summary>Action the back half is currently waiting for the front to confirm.</summary>
+    public LionAction BackPending => _backPending;
+
+    /// <summary><see cref="Time.time"/> at which the back's pending press was registered.</summary>
+    public float BackPendingTime => _backPendingTime;
+
+    /// <summary><see cref="Time.time"/> until which front presses are ignored as cooldown.</summary>
+    public float FrontCooldownUntil => _frontCooldownUntil;
+
+    /// <summary><see cref="Time.time"/> until which back presses are ignored as cooldown.</summary>
+    public float BackCooldownUntil => _backCooldownUntil;
+
+    /// <summary>
+    /// Fires whenever a side's input is received, before resolution. <c>isFront</c> is true for the
+    /// front half, false for back. Useful for showing which button was just pressed.
+    /// </summary>
+    public event Action<bool, LionAction> SidePressed;
+
+    /// <summary>Fires once when both halves successfully agree on an action and it executes.</summary>
+    public event Action<LionAction> ActionMatched;
+
+    /// <summary>
+    /// Fires whenever a side's press is rejected (cooldown, mismatch, too-fast, timeout).
+    /// In the "both fail together" cases (mismatch, too-fast) this fires once for each side.
+    /// </summary>
+    public event Action<bool> SideFailed;
+
     private void Start()
     {
         if (!overrideControllerAutoStart) return;
@@ -71,6 +117,7 @@ public class LionCoordinator : MonoBehaviour
             }
             _frontPending = LionAction.None;
             _frontCooldownUntil = Time.time + failureCooldown;
+            SideFailed?.Invoke(true);
         }
 
         if (_backPending.IsValid && Time.time - _backPendingTime > syncWindow)
@@ -81,6 +128,7 @@ public class LionCoordinator : MonoBehaviour
             }
             _backPending = LionAction.None;
             _backCooldownUntil = Time.time + failureCooldown;
+            SideFailed?.Invoke(false);
         }
     }
 
@@ -91,6 +139,8 @@ public class LionCoordinator : MonoBehaviour
     {
         string sideName = isFront ? "Front" : "Back";
 
+        SidePressed?.Invoke(isFront, action);
+
         float cooldownUntil = isFront ? _frontCooldownUntil : _backCooldownUntil;
         if (Time.time < cooldownUntil)
         {
@@ -99,6 +149,7 @@ public class LionCoordinator : MonoBehaviour
                 float remainingMs = (cooldownUntil - Time.time) * 1000f;
                 Debug.Log($"[Lion] {sideName} press ignored ({remainingMs:0}ms cooldown remaining).");
             }
+            SideFailed?.Invoke(isFront);
             return;
         }
 
@@ -128,6 +179,8 @@ public class LionCoordinator : MonoBehaviour
                     Debug.Log($"[Lion] Rhythm fail: presses too close together ({delta * 1000f:0}ms, need >= {minSyncDelay * 1000f:0}ms).");
                 }
                 FailAndCooldownBoth();
+                SideFailed?.Invoke(true);
+                SideFailed?.Invoke(false);
                 return;
             }
 
@@ -138,6 +191,7 @@ public class LionCoordinator : MonoBehaviour
                     Debug.Log($"[Lion] Action matched: {action} (delta {delta * 1000f:0}ms).");
                 }
                 ExecuteAction(action);
+                ActionMatched?.Invoke(action);
             }
             else
             {
@@ -148,6 +202,8 @@ public class LionCoordinator : MonoBehaviour
                     Debug.Log($"[Lion] Rhythm fail: actions don't match. Front={frontAction}, Back={backAction}.");
                 }
                 FailAndCooldownBoth();
+                SideFailed?.Invoke(true);
+                SideFailed?.Invoke(false);
             }
             return;
         }
