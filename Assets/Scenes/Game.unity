@@ -1220,7 +1220,7 @@ PrefabInstance:
     - target: {fileID: 6670731900788685119, guid: 8a25e825f695ca94d936866d42717381, type: 3}
       propertyPath: m_asset
       value: 
-      objectReference: {fileID: -4516626237390682484, guid: 7f1ac3973a9ed254db9ad4d830e01ebd, type: 3}
+      objectReference: {fileID: -4516626237390682484, guid: 9a57b693222041247b4e051a6a8c2ebb, type: 3}
     - target: {fileID: 6670731900788685119, guid: 8a25e825f695ca94d936866d42717381, type: 3}
       propertyPath: m_alignment.m_x
       value: 1
